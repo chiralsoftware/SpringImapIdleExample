@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.mail.ImapIdleChannelAdapter;
 import org.springframework.integration.mail.ImapMailReceiver;
 import org.springframework.messaging.Message;
@@ -27,11 +26,6 @@ public class BeanConfiguration {
     private static final Logger LOG = Logger.getLogger(BeanConfiguration.class.getName());
 
     @Bean
-    public MessageSource<Object> imapMessageSource() {
-        return null;
-    }
-
-    @Bean
     public ImapIdleChannelAdapter imapMailReceiver(@Autowired ImapMailReceiver mailReceiver) {
         final ImapIdleChannelAdapter result = new ImapIdleChannelAdapter(mailReceiver);
         LOG.info("ok i created this imapidlechanneladapter: " + result);
@@ -40,7 +34,7 @@ public class BeanConfiguration {
     }
         
     @ServiceActivator(inputChannel = "emailOutputChannel")
-    public void get(Message m) throws MessagingException, IOException {
+    public void processEmailMessage(Message m) throws MessagingException, IOException {
         LOG.info("========= Service activator  ========== " + m);
         final Object payload = m.getPayload();
         if(payload == null) {
